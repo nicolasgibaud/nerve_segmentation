@@ -51,7 +51,7 @@ def create_images_generator(data_path=None):
         except IOError:
             pass
 
-def create_dense_labels_from_sparse(sparse_labels_vector, image_size=IMAGE_SIZE):
+def create_dense_labels_from_sparse(sparse_labels_vector, image_size=None):
     """
     Takes as input a list of the sparse labels and returns the corresponding
     dense array of 0 and 1 as a 1-D vector
@@ -67,6 +67,9 @@ def create_dense_labels_from_sparse(sparse_labels_vector, image_size=IMAGE_SIZE)
     Raises
     ------
     """
+    if image_size is None:
+        image_size = IMAGE_SIZE
+
     dense_labels_vector = np.zeros(image_size)
 
     for i in range(0, len(sparse_labels_vector)-1, 2):
@@ -77,9 +80,14 @@ def create_dense_labels_from_sparse(sparse_labels_vector, image_size=IMAGE_SIZE)
     return dense_labels_vector
 
 
-def transform_vector_to_matrix(vector, image_length=IMAGE_LENGTH, \
-                    image_width=IMAGE_WIDTH):
-        matrix = [vector[i*IMAGE_WIDTH:(i+1)*IMAGE_WIDTH] for i in range(IMAGE_LENGTH)]
+def transform_vector_to_matrix(vector, image_length=None, \
+                    image_width=None):
+        if image_length is None:
+            image_length = IMAGE_LENGTH
+        if image_width is None:
+            image_width = IMAGE_WIDTH
+
+        matrix = np.array([vector[i*IMAGE_WIDTH:(i+1)*IMAGE_WIDTH] for i in range(IMAGE_LENGTH)])
         return matrix
 
 def import_labels_csv(file_path=None):
@@ -95,7 +103,8 @@ def convert_string_labels_to_list(string_labels):
     return list_labels_int
 
 
-def create_labels_generator(file_path=None):
+def create_labels_generator(file_path=None, image_length=None, \
+                    image_width=None, image_size=None):
     """
     Returns a generator that yield the numpy array of the images files contained
     in repository at path *data_path*
@@ -107,7 +116,11 @@ def create_labels_generator(file_path=None):
             labels_int = convert_string_labels_to_list(labels)
         except AttributeError: #Nan
             labels_int = []
-        yield labels_int
+        labels_dense_vector = create_dense_labels_from_sparse(labels_int, \
+                        image_size=image_size)
+        labels_dense_matrix = transform_vector_to_matrix(labels_dense_vector, \
+                            image_length=image_length, image_width=image_width)
+        yield labels_dense_matrix
 
 
 def create_image_and_labels_generator(images_path=None, file_path=None):
