@@ -9,13 +9,13 @@ import json
 import os
 
 # path to SETTINGS.json file (in current directory)
-settings = os.path.join(os.path.dirname(__file__), '/SETTINGS.json')
+current_dir_path = os.path.dirname(os.path.realpath(__file__))
+settings = os.path.join(current_dir_path, 'SETTINGS.json')
+settings = settings.replace("\\", "/")
 
 # import paths
 PATHS = json.loads(open(settings).read())
 # path to the main folders
-ROOT_PATH = PATHS["ROOT"]
+ROOT_DIR = PATHS["ROOT_DIR"]
 # path to the folder of data
-DATA_PATH = os.path.join(ROOT, "data/")
-
-print("Project configuration loaded")
+DATA_DIR = os.path.join(ROOT_DIR, "data")
