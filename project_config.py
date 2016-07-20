@@ -19,3 +19,8 @@ PATHS = json.loads(open(settings).read())
 ROOT_DIR = PATHS["ROOT_DIR"]
 # path to the folder of data
 DATA_DIR = os.path.join(ROOT_DIR, "data")
+
+# Project constants
+IMAGE_LENGTH = 420
+IMAGE_WIDTH = 580
+IMAGE_SIZE = IMAGE_LENGTH * IMAGE_WIDTH
