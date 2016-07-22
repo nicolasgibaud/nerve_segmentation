@@ -37,7 +37,8 @@ def create_images_generator(data_path=None):
     if data_path is None:
         data_path = os.path.join(DATA_DIR, "raw", "train", "images")
 
-    im_files = np.array([os.path.join(data_path, f) for f in sorted(os.listdir(data_path))])
+    im_files = np.array([os.path.join(data_path, f) \
+    for f in sorted(os.listdir(data_path)) if ".tif" in f])
     number_im_files = [get_image_number_from_path(im) for im in im_files]
     number_im_files_filled = [num.split("_")[0] + "_" + num.split("_")[1].zfill(4) \
                                     for num in number_im_files]
@@ -67,6 +68,7 @@ def create_dense_labels_from_sparse(sparse_labels_vector, image_size=None):
     Raises
     ------
     """
+
     if image_size is None:
         image_size = IMAGE_SIZE
 
@@ -129,3 +131,8 @@ def create_image_and_labels_generator(images_path=None, file_path=None):
 
     while True:
         yield images_generator.next(), labels_generator.next()
+
+
+def create_binary_label_from_matrix(labels_matrix):
+    binary_label = (labels_matrix.sum() > 0) * 1
+    return binary_label
